@@ -235,36 +235,116 @@ public function Employee_signin() {
         'must_update'   => $user->must_update ?? 0,
     ];
 
-    // Load management permissions if applicable
-    if ($user->position_id == 22) {
-        $allowed_links = $this->queries->get_employee_links($user->empl_id);
-        $sessionData['permissions'] = $allowed_links;
+//     // Load management permissions if applicable
+//     if ($user->position_id == 22) {
+//         $allowed_links = $this->queries->get_employee_links($user->empl_id);
+//         $sessionData['permissions'] = $allowed_links;
+//     }
+
+//     $this->session->set_userdata($sessionData);
+
+//     // Check account status
+//     if ($user->empl_status !== 'open') {
+//         $this->session->set_flashdata('mass', $this->lang->line("blocked_menu"));
+//         return redirect("welcome/employee_login");
+//     }
+
+//     // Force profile update for management if required
+//     if ($user->position_id == 22 && $user->must_update == 1) {
+//         return redirect('welcome/update_profile');
+//     }
+
+//     // Redirect based on position
+//     switch ($user->position_id) {
+//         case '1':
+//         case '2':
+//         case '6':
+//         case '17':
+//             return redirect('oficer/index');
+//         case '22':
+//             return redirect('admin/index');
+//         default:
+//             return redirect('oficer/index');
+//     }
+// }
+
+public function Employee_signin() {
+    // Load form validation library
+    $this->load->library('form_validation');
+
+    // Validation rules
+    $this->form_validation->set_rules('empl_no', 'Employee Phone number', 'required|trim');
+    $this->form_validation->set_rules('password', 'Password', 'required|trim');
+    $this->form_validation->set_error_delimiters('<div class="text-danger">', '</div>');
+
+    // If validation fails
+    if (!$this->form_validation->run()) {
+        return $this->employee_login();
     }
 
-    $this->session->set_userdata($sessionData);
+    // Get input values
+    $empl_no = $this->input->post('empl_no');
+    $password_input = $this->input->post('password');
 
-    // Check account status
-    if ($user->empl_status !== 'open') {
-        $this->session->set_flashdata('mass', $this->lang->line("blocked_menu"));
+    // Load model
+    $this->load->model('queries');
+    $user = $this->queries->employee_user_data($empl_no);
+
+    // If no user found
+    if (!$user) {
+        $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
         return redirect("welcome/employee_login");
     }
 
-    // Force profile update for management if required
-    if ($user->position_id == 22 && $user->must_update == 1) {
-        return redirect('welcome/update_profile');
+    $stored_password = $user->password;
+    $login_success = false;
+
+    // ✅ Check if password is old SHA1 hash (40 characters long)
+    if (strlen($stored_password) === 40 && sha1($password_input) === $stored_password) {
+        $login_success = true;
+
+        // ✅ Upgrade to bcrypt hash
+        $new_hash = password_hash($password_input, PASSWORD_BCRYPT);
+
+        // Update employee password in database
+        $this->db->where('empl_id', $user->empl_id);
+        $this->db->update('tbl_employee', ['password' => $new_hash]);
+    } 
+    // ✅ Check if bcrypt password
+    elseif (password_verify($password_input, $stored_password)) {
+        $login_success = true;
     }
 
-    // Redirect based on position
-    switch ($user->position_id) {
-        case '1':
-        case '2':
-        case '6':
-        case '17':
-            return redirect('oficer/index');
-        case '22':
-            return redirect('admin/index');
-        default:
-            return redirect('oficer/index');
+    // If login fails
+    if (!$login_success) {
+        $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
+        return redirect("welcome/employee_login");
+    }
+
+    // ✅ Set session data
+    $session_data = [
+        'empl_id'     => $user->empl_id,
+        'empl_no'     => $user->empl_no,
+        'empl_name'   => $user->empl_name,
+        'empl_role'   => isset($user->role) ? $user->role : 'employee',
+        'is_logged_in'=> true
+    ];
+
+    $this->session->set_userdata($session_data);
+
+    // ✅ Optional: Redirect by role
+    if (isset($user->role)) {
+        switch ($user->role) {
+            case 'admin':
+                return redirect("admin/dashboard");
+            case 'manager':
+                return redirect("manager/dashboard");
+            default:
+                return redirect("employee/dashboard");
+        }
+    } else {
+        // Default redirect
+        return redirect("employee/dashboard");
     }
 }
 
