@@ -129,7 +129,7 @@ include_once APPPATH . "views/partials/header.php";
                         <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-white"><?= $sno++; ?></span>
                     </td>
                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        <div class="flex items-center"><?= htmlspecialchars($item->full_name) ?></div>
+                        <div class="flex items-center uppercase"><?= htmlspecialchars($item->full_name) ?></div>
                     </td>
                      <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
 

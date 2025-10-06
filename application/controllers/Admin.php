@@ -5811,7 +5811,7 @@ public function print_kitini_transaction()
 		$comp_id = $this->session->userdata('comp_id');
 		$cash = $this->queries->get_cash_transaction($comp_id);
 		$compdata = $this->queries->get_companyData($comp_id);
-		$lazo = $this->queries->get_today_expected_collections($comp_id);
+		$lazo = $this->queries->get_expected_collections($comp_id);
 
 		//   echo "<pre>";
     	//    print_r($lazo);
