@@ -1920,7 +1920,7 @@ public function customer(){
 }
 
 
-  public function sendsmsOld($phone,$massage){
+  public function sendsms($phone,$massage){
     //public function sendsms(){f
     //$phone = '255628323760';
     //$massage = 'mapenzi yanauwa';
@@ -1949,56 +1949,56 @@ public function customer(){
   }
 
 
-  public function sendsms($phone,$massage) {
-    try {
-        $phone = '255628323760';
-        $massage = 'mapenzi yanauwa';
-        $token = getenv('SMS_TOKEN');
+//   public function sendsms($phone,$massage) {
+//     try {
+//         $phone = '255628323760';
+//         $massage = 'mapenzi yanauwa';
+//         $token = getenv('SMS_TOKEN');
 
-        if (empty($token)) {
-            throw new Exception("SMS token not found in environment variables.");
-        }
+//         if (empty($token)) {
+//             throw new Exception("SMS token not found in environment variables.");
+//         }
 
-        $url = "https://sms-api.kadolab.com/api/send-sms";
+//         $url = "https://sms-api.kadolab.com/api/send-sms";
 
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Authorization: Bearer ' . $token,
-            'Content-Type: application/json',
-        ]);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-            "phoneNumbers" => ["+$phone"],
-            "message" => $massage
-        ]));
+//         $ch = curl_init($url);
+//         curl_setopt($ch, CURLOPT_POST, true);
+//         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//         curl_setopt($ch, CURLOPT_HTTPHEADER, [
+//             'Authorization: Bearer ' . $token,
+//             'Content-Type: application/json',
+//         ]);
+//         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+//             "phoneNumbers" => ["+$phone"],
+//             "message" => $massage
+//         ]));
 
-        $server_output = curl_exec($ch);
+//         $server_output = curl_exec($ch);
 
-        if (curl_errno($ch)) {
-            throw new Exception('Curl error: ' . curl_error($ch));
-        }
+//         if (curl_errno($ch)) {
+//             throw new Exception('Curl error: ' . curl_error($ch));
+//         }
 
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+//         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+//         curl_close($ch);
 
-        if ($http_code !== 200) {
-            throw new Exception("API returned status code $http_code: $server_output");
-        }
+//         if ($http_code !== 200) {
+//             throw new Exception("API returned status code $http_code: $server_output");
+//         }
 
-        // Optionally decode JSON response
-        $response = json_decode($server_output, true);
-        return $response;
+//         // Optionally decode JSON response
+//         $response = json_decode($server_output, true);
+//         return $response;
 
-    } catch (Exception $e) {
-        // Handle error gracefully
-        error_log("SMS sending failed: " . $e->getMessage());
-        return [
-            'success' => false,
-            'message' => $e->getMessage()
-        ];
-    }
-}
+//     } catch (Exception $e) {
+//         // Handle error gracefully
+//         error_log("SMS sending failed: " . $e->getMessage());
+//         return [
+//             'success' => false,
+//             'message' => $e->getMessage()
+//         ];
+//     }
+// }
 
   
          public function customer_details($customer_id){
