@@ -180,60 +180,60 @@ public function create_blanch()
 	
 	
 	
-public function Employee_signin() {
-    // Validation rules
-    $this->form_validation->set_rules('empl_no', 'Employee Phone number', 'required');
-    $this->form_validation->set_rules('password', 'Password', 'required');
-    $this->form_validation->set_error_delimiters('<div class="text-danger">','</div>');
+// public function Employee_signin() {
+//     // Validation rules
+//     $this->form_validation->set_rules('empl_no', 'Employee Phone number', 'required');
+//     $this->form_validation->set_rules('password', 'Password', 'required');
+//     $this->form_validation->set_error_delimiters('<div class="text-danger">','</div>');
 
-    if (!$this->form_validation->run()) {
-        return $this->employee_login();
-    }
+//     if (!$this->form_validation->run()) {
+//         return $this->employee_login();
+//     }
 
-    $empl_no = $this->input->post('empl_no');
-    $password_input = $this->input->post('password');
+//     $empl_no = $this->input->post('empl_no');
+//     $password_input = $this->input->post('password');
 
-    $this->load->model('queries');
-    $user = $this->queries->employee_user_data($empl_no);
+//     $this->load->model('queries');
+//     $user = $this->queries->employee_user_data($empl_no);
 
-    if (!$user) {
-        $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
-        return redirect("welcome/employee_login");
-    }
+//     if (!$user) {
+//         $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
+//         return redirect("welcome/employee_login");
+//     }
 
-    $stored_password = $user->password;
-    $login_success = false;
+//     $stored_password = $user->password;
+//     $login_success = false;
 
-    // Check if password is old SHA1
-    if (strlen($stored_password) === 40 && sha1($password_input) === $stored_password) {
-        $login_success = true;
+//     // Check if password is old SHA1
+//     if (strlen($stored_password) === 40 && sha1($password_input) === $stored_password) {
+//         $login_success = true;
 
-        // Re-hash password with bcrypt and update DB
-        $new_hash = password_hash($password_input, PASSWORD_BCRYPT);
-        $this->db->update('tbl_employee`', ['password' => $new_hash], ['empl_id' => $user->empl_id]);
-    } 
-    // Check bcrypt password
-    elseif (password_verify($password_input, $stored_password)) {
-        $login_success = true;
-    }
+//         // Re-hash password with bcrypt and update DB
+//         $new_hash = password_hash($password_input, PASSWORD_BCRYPT);
+//         $this->db->update('tbl_employee`', ['password' => $new_hash], ['empl_id' => $user->empl_id]);
+//     } 
+//     // Check bcrypt password
+//     elseif (password_verify($password_input, $stored_password)) {
+//         $login_success = true;
+//     }
 
-    if (!$login_success) {
-        $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
-        return redirect("welcome/employee_login");
-    }
+//     if (!$login_success) {
+//         $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
+//         return redirect("welcome/employee_login");
+//     }
 
-    // Prepare session data
-    $sessionData = [
-        'empl_id'       => $user->empl_id,
-        'blanch_id'     => $user->blanch_id,
-        'username'      => $user->username,
-        'empl_name'     => $user->empl_name,
-        'comp_id'       => $user->comp_id ?? null,
-        'position_id'   => $user->position_id,
-        'position_name' => $user->position,
-        'user_id'       => $user->empl_id,
-        'must_update'   => $user->must_update ?? 0,
-    ];
+//     // Prepare session data
+//     $sessionData = [
+//         'empl_id'       => $user->empl_id,
+//         'blanch_id'     => $user->blanch_id,
+//         'username'      => $user->username,
+//         'empl_name'     => $user->empl_name,
+//         'comp_id'       => $user->comp_id ?? null,
+//         'position_id'   => $user->position_id,
+//         'position_name' => $user->position,
+//         'user_id'       => $user->empl_id,
+//         'must_update'   => $user->must_update ?? 0,
+//     ];
 
 //     // Load management permissions if applicable
 //     if ($user->position_id == 22) {
