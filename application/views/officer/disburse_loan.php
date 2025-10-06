@@ -222,13 +222,18 @@ document.getElementById('simple-search').addEventListener('keyup', function() {
 </script>
 
 
+<!-- ✅ jQuery must come first -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Include Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-<!-- Include Select2 JS -->
+<!-- Then plugin scripts -->
+<script src="<?php echo base_url('public/js/preline.js'); ?>" defer></script>
+<script src="<?php echo base_url('public/js/cropper.min.js'); ?>" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- Then your custom scripts -->
+<script src="<?php echo base_url('public/js/main.js'); ?>" defer></script>
+<script src="<?php echo base_url('public/js/stepper.js'); ?>" defer></script>
+
 <style>
 .select2-container--default .select2-selection--single {
     background-color: #1f2937;

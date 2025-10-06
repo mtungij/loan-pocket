@@ -88,6 +88,90 @@ input[type="checkbox"]:not(:checked)::after {
 </style>
 
   <link rel="stylesheet" href="<?php echo base_url('public/css/output.css') ?>">
+  </head>
+
+  <!-- Dark/Light Mode Toggle Button -->
+  <!-- <button id="theme-toggle" style="position:fixed;top:16px;right:16px;z-index:1000;padding:8px 12px;border-radius:6px;border:none;background:#eee;color:#333;cursor:pointer;">🌙/☀️</button> -->
+ <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const html = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+  const knob = document.getElementById('toggle-circle');
+  const sunIcon = document.getElementById('icon-sun');
+  const moonIcon = document.getElementById('icon-moon');
+
+  function applyTheme(theme) {
+    html.classList.toggle('dark', theme === 'dark');
+    html.classList.toggle('light', theme === 'light');
+    localStorage.setItem('hs_theme', theme);
+
+    // Move knob and toggle icons
+    if (theme === 'dark') {
+      knob.style.transform = 'translateX(1.75rem)';
+      sunIcon.style.opacity = '0';
+      moonIcon.style.opacity = '1';
+    } else {
+      knob.style.transform = 'translateX(0)';
+      sunIcon.style.opacity = '1';
+      moonIcon.style.opacity = '0';
+    }
+  }
+
+  const savedTheme =
+    localStorage.getItem('hs_theme') ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  applyTheme(savedTheme);
+
+  toggle.addEventListener('click', () => {
+    const newTheme = html.classList.contains('dark') ? 'light' : 'dark';
+    applyTheme(newTheme);
+  });
+});
+</script>
+
+  <style>
+    html.light, body.light {
+      background: #f5f5f5;
+      color: #222;
+    }
+    html.dark, body.dark {
+      background: #18181b;
+      color: #e5e7eb;
+    }
+    .dark .bg-gray-50 {
+      background-color: #18181b !important;
+    }
+    .dark .text-gray-800 {
+      color: #e5e7eb !important;
+    }
+    .dark .bg-white {
+      background-color: #23232a !important;
+    }
+    .dark .border-gray-200 {
+      border-color: #23232a !important;
+    }
+    .dark .border-gray-700 {
+      border-color: #444 !important;
+    }
+    .dark .dark\:bg-gray-800 {
+      background-color: #23232a !important;
+    }
+    .dark .dark\:text-gray-400 {
+      color: #b3b3b3 !important;
+    }
+    .dark .dark\:border-gray-700 {
+      border-color: #444 !important;
+    }
+    .dark .dark\:text-gray-500 {
+      color: #888 !important;
+    }
+    .dark .dark\:hover\:text-gray-500:hover {
+      color: #aaa !important;
+    }
+    .dark .dark\:focus\:text-gray-500:focus {
+      color: #aaa !important;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-poppins">

@@ -17,7 +17,7 @@ include_once APPPATH . "views/partials/officerheader.php";
         <?php endif; ?>
 
         <div class="bg-gray-100">
-    <div class="w-full bg-cyan-600 text-white">
+    <div class="w-full bg-cyan-600 text-white dark:bg-cyan-600">
         <div class="flex flex-col max-w-screen-xl px-4 mx-auto md:flex-row md:justify-between md:px-6 lg:px-8">
             <div class="p-4 flex flex-row items-center justify-between">
                 <a href="#" class="text-lg font-semibold tracking-widest uppercase rounded-lg focus:outline-none focus:shadow-outline">
@@ -113,24 +113,29 @@ include_once APPPATH . "views/partials/officerheader.php";
   <div class="w-full md:w-4/6 mb-4 md:mb-0">
       <div class="bg-white p-4 rounded-lg shadow-md overflow-auto">
         <h2 class="text-lg font-bold text-green-600 mb-3">Taarifa Za Mkopo</h2>
-        <table class="min-w-full text-sm text-left text-gray-700 border border-gray-200">
-          <thead class="bg-green-100 text-green-800 font-semibold">
-            <tr>
-              <th class="px-4 py-2 border-b">Mkopo</th>
-              <th class="px-4 py-2 border-b">Kilicholipwa</th>
-              <th class="px-4 py-2 border-b">Deni La Mkopo</th>
-            </tr>
-          </thead>
-          <tbody>
-           
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-2 border-b"><?= safe_number_format($loan_int); ?></td>
-                <td class="px-4 py-2 border-b"><?= $deposit > $loan_int ? safe_number_format($deposit - $loan_int) : safe_number_format($deposit); ?></td>
-                <td class="px-4 py-2 border-b"><?= safe_number_format(max(0, $loan_int - $deposit)); ?></td>
-              </tr>
-            
-          </tbody>
-        </table>
+    <table class="min-w-full text-sm text-left border border-gray-200 dark:border-gray-700">
+  <thead class="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 font-semibold">
+    <tr>
+      <th class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">Mkopo</th>
+      <th class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">Kilicholipwa</th>
+      <th class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">Deni La Mkopo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-700">
+      <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200">
+        <?= safe_number_format($loan_int); ?>
+      </td>
+      <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200">
+        <?= $deposit > $loan_int ? safe_number_format($deposit - $loan_int) : safe_number_format($deposit); ?>
+      </td>
+      <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200">
+        <?= safe_number_format(max(0, $loan_int - $deposit)); ?>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
         
         

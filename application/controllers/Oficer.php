@@ -1843,19 +1843,19 @@ public function customer(){
 
  public function create_customer() {
 
-    if (!isset($_SESSION)) {
-        session_start();
-    }
+    // if (!isset($_SESSION)) {
+    //     session_start();
+    // }
 
-    $post_token = $this->input->post('form_token');
+    // $post_token = $this->input->post('form_token');
 
-    if (!$post_token || $post_token !== ($_SESSION['form_token'] ?? null)) {
-        $this->session->set_flashdata('error', 'Invalid or duplicate form submission.');
-        return redirect('oficer/customer');
-    }
+    // if (!$post_token || $post_token !== ($_SESSION['form_token'] ?? null)) {
+    //     $this->session->set_flashdata('error', 'Invalid or duplicate form submission.');
+    //     return redirect('oficer/customer');
+    // }
 
-    // Invalidate token so it can't be reused
-    unset($_SESSION['form_token']);
+    // // Invalidate token so it can't be reused
+    // unset($_SESSION['form_token']);
 
     $this->form_validation->set_rules('comp_id', 'company', 'required');
     $this->form_validation->set_rules('empl_id', 'company', 'required');
@@ -1869,10 +1869,10 @@ public function customer(){
     if ($this->form_validation->run()) {
         $data = $this->input->post();
 
-        // Remove form_token before inserting into database
-        if (isset($data['form_token'])) {
-            unset($data['form_token']);
-        }
+        // // Remove form_token before inserting into database
+        // if (isset($data['form_token'])) {
+        //     unset($data['form_token']);
+        // }
 
         // Process the phone number
         $phone_no = $data['phone_no'];
@@ -1906,6 +1906,7 @@ public function customer(){
                     "Tunathamini uamuzi wako wa kujiunga nasi. Kwa maswali, ushauri au msaada wowote, " .
                     "tupigie simu kupitia namba: $comp_phone. Tuko tayari kukuhudumia kwa moyo wote!";
 
+             
                 $this->sendsms($phone_no, $massage);
                 $this->session->set_flashdata('massage', 'Customer successfully registered.');
             } else {
@@ -1919,7 +1920,7 @@ public function customer(){
 }
 
 
-  public function sendsms($phone,$massage){
+  public function sendsmsOld($phone,$massage){
     //public function sendsms(){f
     //$phone = '255628323760';
     //$massage = 'mapenzi yanauwa';
@@ -1946,6 +1947,59 @@ public function customer(){
   
   //print_r($server_output);
   }
+
+
+  public function sendsms($phone,$massage) {
+    try {
+        $phone = '255628323760';
+        $massage = 'mapenzi yanauwa';
+        $token = getenv('SMS_TOKEN');
+
+        if (empty($token)) {
+            throw new Exception("SMS token not found in environment variables.");
+        }
+
+        $url = "https://sms-api.kadolab.com/api/send-sms";
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/json',
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+            "phoneNumbers" => ["+$phone"],
+            "message" => $massage
+        ]));
+
+        $server_output = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            throw new Exception('Curl error: ' . curl_error($ch));
+        }
+
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code !== 200) {
+            throw new Exception("API returned status code $http_code: $server_output");
+        }
+
+        // Optionally decode JSON response
+        $response = json_decode($server_output, true);
+        return $response;
+
+    } catch (Exception $e) {
+        // Handle error gracefully
+        error_log("SMS sending failed: " . $e->getMessage());
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
   
          public function customer_details($customer_id){
             $this->load->model('queries');
@@ -5006,10 +5060,19 @@ $wakala = $this->input->post('wakala'); // may be empty for cash
 
         $total_depost = $this->queries->get_sum_dapost($loan_id);
          $loan_dep = $total_depost->remain_balance_loan;
+       
+
          $kumaliza_depost = $loan_dep + $kumaliza;
          $loan_int = $loan_restoration->loan_int;
          $remain_loan = $loan_int - $total_depost->remain_balance_loan;
-           
+
+
+
+      
+         $baki = $loan_int - ($loan_dep + $kumaliza);
+
+        //    print_r( $kumaliza);
+        //  exit();
 
          if ($kumaliza_depost < $loan_int){
             //print_r($kumaliza_depost);
@@ -5084,7 +5147,7 @@ $wakala = $this->input->post('wakala'); // may be empty for cash
           $this->insert_loan_lecordDataDeposit($comp_id,$customer_id,$loan_id,$blanch_id,$update_res,$dep_id,$group_id,$trans_id,$restoration,$loan_aproved,$deposit_date,$empl_id,$wakala);    
           }
 
-         $this->depost_balance($loan_id,$comp_id,$blanch_id,$customer_id,$new_depost,$sum_balance,$description,$role,$p_method,$group_id,$deposit_date,$dep_id,$wakala);
+         $this->depost_balance($loan_id,$comp_id,$blanch_id,$customer_id,$new_depost,$sum_balance,$description,$role,$p_method,$group_id,$deposit_date,$dep_id,$wakala,$baki);
          $this->insert_remainloan($loan_id,$depost_amount,$paid_out,$dep_id);
          $this->update_loastatus($loan_id);
          $this->update_outstand_status($loan_id);
@@ -5168,7 +5231,7 @@ $wakala = $this->input->post('wakala'); // may be empty for cash
           $this->insert_loan_lecordDataDeposit($comp_id,$customer_id,$loan_id,$blanch_id,$update_res,$dep_id,$group_id,$trans_id,$restoration,$loan_aproved,$deposit_date,$empl_id,$wakala);    
           };
          $this->insert_remainloan($loan_id,$depost_amount,$paid_out,$dep_id);
-         $this->depost_balance($loan_id,$comp_id,$blanch_id,$customer_id,$new_depost,$sum_balance,$description,$role,$p_method,$group_id,$deposit_date,$dep_id,$wakala);
+         $this->depost_balance($loan_id,$comp_id,$blanch_id,$customer_id,$new_depost,$sum_balance,$description,$role,$p_method,$group_id,$deposit_date,$dep_id,$wakala,$baki);
               if (@$principal_blanch == TRUE) {
          $this->update_principal_capital_balanc($comp_id,$blanch_id,$trans_id,$princ_status,$principal_insert);
          }elseif(@$principal_blanch == FALSE){
@@ -5295,7 +5358,7 @@ $wakala = $this->input->post('wakala'); // may be empty for cash
           }else{
           $this->insert_loan_lecordDataDeposit($comp_id,$customer_id,$loan_id,$blanch_id,$new_depost,$dep_id,$group_id,$trans_id,$restoration,$loan_aproved,$deposit_date,$empl_id,$wakala);    
           }
-         $this->depost_balance($loan_id,$comp_id,$blanch_id,$customer_id,$new_depost,$sum_balance,$description,$role,$p_method,$group_id,$deposit_date,$dep_id,$wakala);
+         $this->depost_balance($loan_id,$comp_id,$blanch_id,$customer_id,$new_depost,$sum_balance,$description,$role,$p_method,$group_id,$deposit_date,$dep_id,$wakala,$baki);
         if (@$principal_blanch == TRUE) {
          $this->update_principal_capital_balanc($comp_id,$blanch_id,$trans_id,$princ_status,$principal_insert);
          }elseif(@$principal_blanch == FALSE){
@@ -5553,12 +5616,14 @@ public function insert_comp_balance($comp_id,$new_depost){
       }
 
 
-    public function depost_balance($loan_id,$comp_id,$blanch_id,$customer_id,$new_depost,$sum_balance,$description,$role,$p_method,$group_id,$deposit_date,$dep_id,$wakala){
+    public function depost_balance($loan_id,$comp_id,$blanch_id,$customer_id,$new_depost,$sum_balance,$description,$role,$p_method,$group_id,$deposit_date,$dep_id,$wakala,$baki){
     //$day = date("Y-m-d");
-    $this->db->query("INSERT INTO tbl_pay (`loan_id`,`blanch_id`,`comp_id`,`customer_id`,`depost`,`balance`,`description`,`pay_status`,`stat`,`date_pay`,`emply`,`p_method`,`group_id`,`date_data`,`dep_id`,`wakala`) VALUES ('$loan_id','$blanch_id','$comp_id','$customer_id','$new_depost','$sum_balance','CASH DEPOSIT','1','1','$day','$role','$p_method','$group_id','$deposit_date','$dep_id','$wakala')");
+    $this->db->query("INSERT INTO tbl_pay (`loan_id`,`blanch_id`,`comp_id`,`customer_id`,`depost`,`balance`,`description`,`pay_status`,`stat`,`date_pay`,`emply`,`p_method`,`group_id`,`date_data`,`dep_id`,`wakala`,`rem_debt`) VALUES ('$loan_id','$blanch_id','$comp_id','$customer_id','$new_depost','$sum_balance','CASH DEPOSIT','1','1','$day','$role','$p_method','$group_id','$deposit_date','$dep_id','$wakala','$baki')");
     return $this->db->insert_id();
 
       }
+
+
 
 
     public function insert_loan_lecordDataDeposit($comp_id,$customer_id,$loan_id,$blanch_id,$update_res,$dep_id,$group_id,$trans_id,$restoration,$loan_aproved,$deposit_date,$empl_id,$wakala){

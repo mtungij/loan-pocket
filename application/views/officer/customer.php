@@ -1,17 +1,24 @@
 
+
 <?php
 include_once APPPATH . "views/partials/officerheader.php";
 
-// --- DUMMY DATA - REMOVE AND LOAD FROM YOUR CONTROLLER ---
-// Controller should pass $share, an array of shareholder objects.
-// Each object should have 'share_id', 'share_name', 'share_mobile', 'share_email', 'share_sex', 'share_dob'.
-// if (!isset($share)) {
-//     $share = [
-//         (object)['share_id' => 1, 'share_name' => 'Alice Wonderland', 'share_mobile' => '0712345001', 'share_email' => 'alice@example.com', 'share_sex' => 'female', 'share_dob' => '1985-06-15'],
-//         (object)['share_id' => 2, 'share_name' => 'Bob The Builder', 'share_mobile' => '0712345002', 'share_email' => 'bob@example.com', 'share_sex' => 'male', 'share_dob' => '1978-11-02'],
-//     ];
+// --- DUMMY DATA---
+// Simulate if a penalty setting exists or not.
+// Your controller should set $penart to the penalty object if it exists, or FALSE/null if not.
+// if (!isset($penart)) {
+//     // Scenario 1: No penalty setting exists
+//     // $penart = null;
+
+//     // Scenario 2: A penalty setting exists
+//      $penart = (object)[
+//          '$customer_id' => 1,
+//          'action_penart' => 'PERCENTAGE VALUE', // 'PERCENTAGE VALUE' or 'MONEY VALUE'
+//          'penart' => 1.5, // The actual penalty value
+//          'comp_id' => $_SESSION['comp_id'] ?? 1
+//      ];
 // }
-// --- END DUMMY DATA ---header.php
+// --- END DUMMY DATA ---
 ?>
 
 <!-- ========== MAIN CONTENT BODY ========== -->
@@ -88,20 +95,15 @@ include_once APPPATH . "views/partials/officerheader.php";
                     Register New Customer
                 </h3>
                 
-         <?php
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-
-            if (!isset($_SESSION['form_token'])) {
-                $_SESSION['form_token'] = bin2hex(random_bytes(32));
-            }
-           ?>
+        
 
                 <?php echo form_open("oficer/create_customer", ['novalidate' => true]); ?>
                     <div class="grid sm:grid-cols-12 gap-4 sm:gap-6">
                         <div class="sm:col-span-4">
-                            <label for="f_name" class="block text-sm font-medium mb-2 dark:text-gray-300">* First Name:</label>
+                            <label for="f_name" class=￼
+* Guarantor Business:
+￼
+"block text-sm font-medium mb-2 dark:text-gray-300">* First Name:</label>
                             <input type="text" id="f_name" name="f_name" placeholder="Full name" autocomplete="off" 
                                    class=" uppercase py-2.5 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-cyan-500 focus:ring-cyan-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:placeholder-gray-500 dark:focus:ring-gray-600" value="<?php echo set_value('f_name'); ?>">
                             <?php echo form_error("f_name", '<p class="text-xs text-red-600 mt-2">', '</p>'); ?>
@@ -135,7 +137,7 @@ include_once APPPATH . "views/partials/officerheader.php";
 						<input type="hidden" name="blanch_id" value="<?php echo $empl_data->blanch_id; ?>">
 								
 								<input type="hidden" name="empl_id" value="<?php echo $empl_data->empl_id; ?>">
-                                <input type="hidden" name="form_token" value="<?php echo $_SESSION['form_token']; ?>">
+                               
 
 								
                     </div>
@@ -154,167 +156,6 @@ include_once APPPATH . "views/partials/officerheader.php";
 <?php
 include_once APPPATH . "views/partials/footer.php";
 ?>
-
-<?php // Script for cmd+a fix for DataTables search input (if used) ?>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Include Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-<!-- Include Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-<script>
-document.querySelector('form').addEventListener('submit', function(e) {
-    const btn = this.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    btn.innerText = 'Submitting...';
-});
-</script>
-
-<style>
-.select2-container--default .select2-selection--single {
-    background-color: #1f2937;
-    border: 1px solid #374151;
-    border-radius: 0.5rem;
-    padding: 0.75rem 2.5rem 0.75rem 1rem;
-    height: auto;
-    color: #06b6d4; 
-    font-size: 0.875rem;
-    position: relative;
-}
-.select2-selection__rendered,
-.select2-selection__clear,
-.select2-selection__arrow {
-    color: #d1d5db;
-}
-.select2-selection__arrow {
-    right: 1rem;
-    top: 0;
-    width: 1.5rem;
-    position: absolute;
-}
-.select2-selection__clear {
-    right: 2.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    position: absolute;
-}
-.custom-select2-dropdown {
-    background-color: #1f2937;
-    color: #d1d5db;
-    border: 1px solid #374151;
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-}
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: #ffffff !important; /* Force white text */
-}
-.custom-select2-dropdown .select2-results__option--highlighted {
-    background-color: #06b6d4 !important; /* Tailwind cyan-400 */
-    color: #ffffff !important;
-}
-
-/* White text in the dropdown input if searchable */
-.select2-search__field {
-    color: #ffffff !important;
-    background-color: #1f2937 !important; /* match dark bg */
-    border: 1px solid #374151;
-}
-.custom-select2-dropdown .select2-results__option--highlighted {
-    background-color: #06b6d4;
-    color: #ffffff;
-}
-.custom-select2-container { margin: 0; }
-</style>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        HSStaticMethods.autoInit(); // This is required to initialize all hs-select dropdowns
-    });
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const phoneInput = document.getElementById('phone_no');
-
-    phoneInput.addEventListener('input', function (e) {
-        let value = phoneInput.value.replace(/\D/g, ''); // Remove non-digits
-
-        // Format like: 0712 345 678
-        if (value.length > 3 && value.length <= 6) {
-            value = value.replace(/(\d{3})(\d+)/, '$1 $2');
-        } else if (value.length > 6) {
-            value = value.replace(/(\d{3})(\d{3})(\d+)/, '$1 $2 $3');
-        }
-
-        phoneInput.value = value;
-    });
-
-    // On submit, strip formatting so only digits are sent
-    phoneInput.form.addEventListener('submit', function () {
-        phoneInput.value = phoneInput.value.replace(/\D/g, '');
-    });
-});
-</script>
-
-<script>
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const inputs = document.querySelectorAll('input[data-hs-datatable-search]');
-    inputs.forEach((input) => {
-      input.addEventListener('keydown', function (evt) {
-        if ((evt.metaKey || evt.ctrlKey) && (evt.key === 'a' || evt.key === 'A')) {
-          this.select();
-        }
-      });
-    });
-    // HSStaticMethods.autoInit(['select']); // If Preline selects need explicit init
-  }, 500);
-});
-</script>
-
-<script>
-$(document).ready(function () {
-    const selectConfig = {
-        placeholder: "Select",
-        allowClear: true,
-        width: '100%',
-        dropdownCssClass: 'custom-select2-dropdown',
-        containerCssClass: 'custom-select2-container'
-    };
-
-    $('#branchSelect').select2({...selectConfig, placeholder: "Select Branch"});
-    $('#employeeSelect').select2({...selectConfig, placeholder: "Select Employee"});
-
-    $('#branchSelect').on('change', function () {
-        const branchId = $(this).val();
-
-        $.post('fetch_employee_blanch', { blanch_id: branchId }, function (data) {
-            const employeeSelect = $('#employeeSelect');
-            employeeSelect.html(data).select2({...selectConfig, placeholder: "Select Employee"});
-
-            // If using Preline's hsSelect
-            const customSelect = $('[data-hs-select]');
-            if (customSelect.length) {
-                customSelect.html(data);
-                customSelect.hsSelect();
-            }
-        }).fail(function (xhr, status, error) {
-            console.error('AJAX error:', status, error);
-        });
-    });
-});
-
-// Age Calculation
-function getAge(dob) {
-    const age = new Date().getFullYear() - new Date(dob).getFullYear();
-    document.getElementById('age').value = isNaN(age) ? '' : age;
-}
-</script>
-
-
 
 
 

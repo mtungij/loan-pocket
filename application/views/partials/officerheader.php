@@ -29,23 +29,127 @@
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts/dist/apexcharts.css">
-  <style type="text/css">
-    .apexcharts-tooltip.apexcharts-theme-light
-    {
-      background-color: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-    }
-    
-  </style>
-      <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<style type="text/css">
+/* ApexCharts Tooltip Fix */
+.apexcharts-tooltip.apexcharts-theme-light {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ---------------- LIGHT MODE ---------------- */
+html.light, body.light {
+  background-color: #f5f5f5; /* page background */
+  color: #222222; /* text */
+}
+
+/* Card / container background in light mode */
+/*  */
+html.light .bg-gray-50 {
+  background-color: #f5f5f5 !important;
+}
+html.light .border-gray-200 {
+  border-color: #e5e7eb !important;
+}
+html.light .text-gray-800 {
+  color: #111827 !important;
+}
+
+/* ---------------- DARK MODE ---------------- */
+html.dark, body.dark {
+  background-color: #18181b; /* page background */
+  color: #e5e7eb; /* text */
+}
+
+/* Card / container background in dark mode */
+html.dark .bg-white {
+  background-color: #1f2937 !important; /* bg-gray-800 */
+}
+html.dark .bg-gray-50 {
+  background-color: #18181b !important;
+}
+html.dark .border-gray-200 {
+  border-color: #444 !important;
+}
+html.dark .text-gray-800 {
+  color: #e5e7eb !important;
+}
+
+/* Optional: dark mode tweaks */
+html.dark .dark\:bg-gray-800 {
+  background-color: #1f2937 !important; /* Tailwind bg-gray-800 */
+}
+html.dark .dark\:text-gray-400 {
+  color: #b3b3b3 !important;
+}
+html.dark .dark\:border-gray-700 {
+  border-color: #444 !important;
+}
+html.dark .dark\:text-gray-500 {
+  color: #888 !important;
+}
+html.dark .dark\:hover\:text-gray-500:hover,
+html.dark .dark\:focus\:text-gray-500:focus {
+  color: #aaa !important;
+}
+</style>
+
+
+ <link rel="stylesheet" href="<?php echo base_url('public/css/vendor-styles.css'); ?>">
+
+
+
+<link rel="stylesheet" href="<?php echo base_url('public/css/apexcharts.css'); ?>">
+<link rel="stylesheet" href="<?php echo base_url('public/css/cropper.min.css'); ?>">
+
 
   <link rel="stylesheet" href="<?php echo base_url('public/css/output.css') ?>">
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 font-poppins">
-<script src="https://cdn.jsdelivr.net/npm/preline/dist/preline.js"></script>
+  <!-- Dark/Light Mode Toggle Button -->
+  <!-- <button id="theme-toggle" style="position:fixed;top:16px;right:16px;z-index:1000;padding:8px 12px;border-radius:6px;border:none;background:#eee;color:#333;cursor:pointer;">🌙/☀️</button> -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const html = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+  const knob = document.getElementById('toggle-circle');
+  const sunIcon = document.getElementById('icon-sun');
+  const moonIcon = document.getElementById('icon-moon');
+
+  function applyTheme(theme) {
+    html.classList.toggle('dark', theme === 'dark');
+    html.classList.toggle('light', theme === 'light');
+    localStorage.setItem('hs_theme', theme);
+
+    // Move knob and toggle icons
+    if (theme === 'dark') {
+      knob.style.transform = 'translateX(1.75rem)';
+      sunIcon.style.opacity = '0';
+      moonIcon.style.opacity = '1';
+    } else {
+      knob.style.transform = 'translateX(0)';
+      sunIcon.style.opacity = '1';
+      moonIcon.style.opacity = '0';
+    }
+  }
+
+  const savedTheme =
+    localStorage.getItem('hs_theme') ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  applyTheme(savedTheme);
+
+  toggle.addEventListener('click', () => {
+    const newTheme = html.classList.contains('dark') ? 'light' : 'dark';
+    applyTheme(newTheme);
+  });
+});
+</script>
+
+
+<script src="<?php echo base_url('public/js/preline.js'); ?>" defer></script>
+<script src="<?php echo base_url('public/js/cropper.min.js'); ?>" defer></script>
+
   
   <?php include_once APPPATH . 'views/partials/navbarofficer.php'; ?> 
 

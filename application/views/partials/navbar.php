@@ -46,12 +46,54 @@
               // This logic is already in your new partials/header.php's <script> section.
               // We just need a button to toggle it.
         ?>
-        <button type="button" id="hs-theme-switcher" class="hs-dark-mode-active:hidden block hs-dark-mode group p-2 inline-flex justify-center items-center gap-x-2 rounded-lg border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-300 dark:hover:bg-gray-700" data-hs-theme-click-value="dark">
-          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-        </button>
-        <button type="button" id="hs-theme-switcher-light" class="hs-dark-mode-active:block hidden hs-dark-mode group p-2 inline-flex justify-center items-center gap-x-2 rounded-lg border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-300 dark:hover:bg-gray-700" data-hs-theme-click-value="light">
-          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-        </button>
+     <div class="flex items-center space-x-2">
+ <!-- Dark/Light Toggle Button -->
+<button
+  id="theme-toggle"
+  class="relative flex items-center justify-between w-14 h-7 rounded-full bg-gray-300 dark:bg-gray-600 px-1 transition-colors duration-300"
+>
+  <!-- Sun Icon -->
+  <svg
+    id="icon-sun"
+    xmlns="http://www.w3.org/2000/svg"
+    class="w-5 h-5 text-yellow-500 transition-opacity duration-300"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M12 3v1m0 16v1m8.485-8.485l-.707.707M4.222 4.222l.707.707M21 12h1M2 12H1m16.263 6.263l.707.707M4.222 19.778l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"
+    />
+  </svg>
+
+  <!-- Moon Icon -->
+  <svg
+    id="icon-moon"
+    xmlns="http://www.w3.org/2000/svg"
+    class="w-5 h-5 text-yellow-300 transition-opacity duration-300 opacity-0"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"
+    />
+  </svg>
+
+  <!-- Circle Knob -->
+  <span
+    id="toggle-circle"
+    class="absolute left-0.5 top-0.5 w-6 h-6 bg-white rounded-full shadow transform transition-transform duration-300"
+  ></span>
+</button>
+
+</div>
 
 
         <!-- Profile Dropdown -->

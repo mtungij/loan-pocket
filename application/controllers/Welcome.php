@@ -180,7 +180,6 @@ public function create_blanch()
 	
 	
 	
-	
 public function Employee_signin() {
     // Validation rules
     $this->form_validation->set_rules('empl_no', 'Employee Phone number', 'required');
