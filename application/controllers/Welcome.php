@@ -180,117 +180,22 @@ public function create_blanch()
 	
 	
 	
-// public function Employee_signin() {
-//     // Validation rules
-//     $this->form_validation->set_rules('empl_no', 'Employee Phone number', 'required');
-//     $this->form_validation->set_rules('password', 'Password', 'required');
-//     $this->form_validation->set_error_delimiters('<div class="text-danger">','</div>');
-
-//     if (!$this->form_validation->run()) {
-//         return $this->employee_login();
-//     }
-
-//     $empl_no = $this->input->post('empl_no');
-//     $password_input = $this->input->post('password');
-
-//     $this->load->model('queries');
-//     $user = $this->queries->employee_user_data($empl_no);
-
-//     if (!$user) {
-//         $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
-//         return redirect("welcome/employee_login");
-//     }
-
-//     $stored_password = $user->password;
-//     $login_success = false;
-
-//     // Check if password is old SHA1
-//     if (strlen($stored_password) === 40 && sha1($password_input) === $stored_password) {
-//         $login_success = true;
-
-//         // Re-hash password with bcrypt and update DB
-//         $new_hash = password_hash($password_input, PASSWORD_BCRYPT);
-//         $this->db->update('tbl_employee`', ['password' => $new_hash], ['empl_id' => $user->empl_id]);
-//     } 
-//     // Check bcrypt password
-//     elseif (password_verify($password_input, $stored_password)) {
-//         $login_success = true;
-//     }
-
-//     if (!$login_success) {
-//         $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
-//         return redirect("welcome/employee_login");
-//     }
-
-//     // Prepare session data
-//     $sessionData = [
-//         'empl_id'       => $user->empl_id,
-//         'blanch_id'     => $user->blanch_id,
-//         'username'      => $user->username,
-//         'empl_name'     => $user->empl_name,
-//         'comp_id'       => $user->comp_id ?? null,
-//         'position_id'   => $user->position_id,
-//         'position_name' => $user->position,
-//         'user_id'       => $user->empl_id,
-//         'must_update'   => $user->must_update ?? 0,
-//     ];
-
-//     // Load management permissions if applicable
-//     if ($user->position_id == 22) {
-//         $allowed_links = $this->queries->get_employee_links($user->empl_id);
-//         $sessionData['permissions'] = $allowed_links;
-//     }
-
-//     $this->session->set_userdata($sessionData);
-
-//     // Check account status
-//     if ($user->empl_status !== 'open') {
-//         $this->session->set_flashdata('mass', $this->lang->line("blocked_menu"));
-//         return redirect("welcome/employee_login");
-//     }
-
-//     // Force profile update for management if required
-//     if ($user->position_id == 22 && $user->must_update == 1) {
-//         return redirect('welcome/update_profile');
-//     }
-
-//     // Redirect based on position
-//     switch ($user->position_id) {
-//         case '1':
-//         case '2':
-//         case '6':
-//         case '17':
-//             return redirect('oficer/index');
-//         case '22':
-//             return redirect('admin/index');
-//         default:
-//             return redirect('oficer/index');
-//     }
-// }
-
 public function Employee_signin() {
-    // Load form validation library
-    $this->load->library('form_validation');
-
     // Validation rules
-    $this->form_validation->set_rules('empl_no', 'Employee Phone number', 'required|trim');
-    $this->form_validation->set_rules('password', 'Password', 'required|trim');
-    $this->form_validation->set_error_delimiters('<div class="text-danger">', '</div>');
+    $this->form_validation->set_rules('empl_no', 'Employee Phone number', 'required');
+    $this->form_validation->set_rules('password', 'Password', 'required');
+    $this->form_validation->set_error_delimiters('<div class="text-danger">','</div>');
 
-    // If validation fails
     if (!$this->form_validation->run()) {
         return $this->employee_login();
     }
 
-    // Get input values
     $empl_no = $this->input->post('empl_no');
     $password_input = $this->input->post('password');
 
-    // Load model
     $this->load->model('queries');
     $user = $this->queries->employee_user_data($empl_no);
 
-    // If no user found
     if (!$user) {
         $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
         return redirect("welcome/employee_login");
@@ -299,54 +204,149 @@ public function Employee_signin() {
     $stored_password = $user->password;
     $login_success = false;
 
-    // ✅ Check if password is old SHA1 hash (40 characters long)
+    // Check if password is old SHA1
     if (strlen($stored_password) === 40 && sha1($password_input) === $stored_password) {
         $login_success = true;
 
-        // ✅ Upgrade to bcrypt hash
+        // Re-hash password with bcrypt and update DB
         $new_hash = password_hash($password_input, PASSWORD_BCRYPT);
-
-        // Update employee password in database
-        $this->db->where('empl_id', $user->empl_id);
-        $this->db->update('tbl_employee', ['password' => $new_hash]);
+        $this->db->update('tbl_employee`', ['password' => $new_hash], ['empl_id' => $user->empl_id]);
     } 
-    // ✅ Check if bcrypt password
+    // Check bcrypt password
     elseif (password_verify($password_input, $stored_password)) {
         $login_success = true;
     }
 
-    // If login fails
     if (!$login_success) {
         $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
         return redirect("welcome/employee_login");
     }
 
-    // ✅ Set session data
-    $session_data = [
-        'empl_id'     => $user->empl_id,
-        'empl_no'     => $user->empl_no,
-        'empl_name'   => $user->empl_name,
-        'empl_role'   => isset($user->role) ? $user->role : 'employee',
-        'is_logged_in'=> true
+    // Prepare session data
+    $sessionData = [
+        'empl_id'       => $user->empl_id,
+        'blanch_id'     => $user->blanch_id,
+        'username'      => $user->username,
+        'empl_name'     => $user->empl_name,
+        'comp_id'       => $user->comp_id ?? null,
+        'position_id'   => $user->position_id,
+        'position_name' => $user->position,
+        'user_id'       => $user->empl_id,
+        'must_update'   => $user->must_update ?? 0,
     ];
 
-    $this->session->set_userdata($session_data);
+    // Load management permissions if applicable
+    if ($user->position_id == 22) {
+        $allowed_links = $this->queries->get_employee_links($user->empl_id);
+        $sessionData['permissions'] = $allowed_links;
+    }
 
-    // ✅ Optional: Redirect by role
-    if (isset($user->role)) {
-        switch ($user->role) {
-            case 'admin':
-                return redirect("admin/dashboard");
-            case 'manager':
-                return redirect("manager/dashboard");
-            default:
-                return redirect("employee/dashboard");
-        }
-    } else {
-        // Default redirect
-        return redirect("employee/dashboard");
+    $this->session->set_userdata($sessionData);
+
+    // Check account status
+    if ($user->empl_status !== 'open') {
+        $this->session->set_flashdata('mass', $this->lang->line("blocked_menu"));
+        return redirect("welcome/employee_login");
+    }
+
+    // Force profile update for management if required
+    if ($user->position_id == 22 && $user->must_update == 1) {
+        return redirect('welcome/update_profile');
+    }
+
+    // Redirect based on position
+    switch ($user->position_id) {
+        case '1':
+        case '2':
+        case '6':
+        case '17':
+            return redirect('oficer/index');
+        case '22':
+            return redirect('admin/index');
+        default:
+            return redirect('oficer/index');
     }
 }
+
+// public function Employee_signin() {
+//     // Load form validation library
+//     $this->load->library('form_validation');
+
+//     // Validation rules
+//     $this->form_validation->set_rules('empl_no', 'Employee Phone number', 'required|trim');
+//     $this->form_validation->set_rules('password', 'Password', 'required|trim');
+//     $this->form_validation->set_error_delimiters('<div class="text-danger">', '</div>');
+
+//     // If validation fails
+//     if (!$this->form_validation->run()) {
+//         return $this->employee_login();
+//     }
+
+//     // Get input values
+//     $empl_no = $this->input->post('empl_no');
+//     $password_input = $this->input->post('password');
+
+//     // Load model
+//     $this->load->model('queries');
+//     $user = $this->queries->employee_user_data($empl_no);
+
+//     // If no user found
+//     if (!$user) {
+//         $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
+//         return redirect("welcome/employee_login");
+//     }
+
+//     $stored_password = $user->password;
+//     $login_success = false;
+
+//     // ✅ Check if password is old SHA1 hash (40 characters long)
+//     if (strlen($stored_password) === 40 && sha1($password_input) === $stored_password) {
+//         $login_success = true;
+
+//         // ✅ Upgrade to bcrypt hash
+//         $new_hash = password_hash($password_input, PASSWORD_BCRYPT);
+
+//         // Update employee password in database
+//         $this->db->where('empl_id', $user->empl_id);
+//         $this->db->update('tbl_employee', ['password' => $new_hash]);
+//     } 
+//     // ✅ Check if bcrypt password
+//     elseif (password_verify($password_input, $stored_password)) {
+//         $login_success = true;
+//     }
+
+//     // If login fails
+//     if (!$login_success) {
+//         $this->session->set_flashdata('mass', "Your Phone number or password is invalid, please try again");
+//         return redirect("welcome/employee_login");
+//     }
+
+//     // ✅ Set session data
+//     $session_data = [
+//         'empl_id'     => $user->empl_id,
+//         'empl_no'     => $user->empl_no,
+//         'empl_name'   => $user->empl_name,
+//         'empl_role'   => isset($user->role) ? $user->role : 'employee',
+//         'is_logged_in'=> true
+//     ];
+
+//     $this->session->set_userdata($session_data);
+
+//     // ✅ Optional: Redirect by role
+//     if (isset($user->role)) {
+//         switch ($user->role) {
+//             case 'admin':
+//                 return redirect("admin/dashboard");
+//             case 'manager':
+//                 return redirect("manager/dashboard");
+//             default:
+//                 return redirect("employee/dashboard");
+//         }
+//     } else {
+//         // Default redirect
+//         return redirect("employee/dashboard");
+//     }
+// }
 
 
 public function update_profile() {
